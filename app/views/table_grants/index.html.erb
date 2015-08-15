@@ -1,0 +1,114 @@
+
+  <div class = "row">
+    <div class = "col-md-6 col-xs-6">
+      <%= render 'users/form' %>
+    </div>
+    <div class = "col-md-6 col-xs-6 ">
+
+      <%= render 'form' %>
+
+    </div>
+
+  </div>
+  <div class = "row">
+  <div class = "col-md-6 col-xs-6">
+      <table class = "table table-striped table-hover">
+          <thead>
+            <th>User ID</th>
+            <th>Email</th>
+            <th>Admin</th>
+            <th colspan="2"></th>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td> <%= user.id %></td>
+                <td> <%= user.email %> </td>
+                <td> <%= user.admin %> </td>
+                <td> <%= link_to 'Edit', edit_user_path(user) %> </td>
+                <td> <%= link_to 'Destroy', user, method: :delete, data: {confirm: 'Are you sure?'} %> </td>
+              </tr>
+            <% end %>    
+          </tbody>
+
+        </table>
+      </div>
+    <div class = "col-md-6 col-xs-6">
+      <div class="table-responsive">
+        <table class = "table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Db</th>
+              <th>Table</th>
+              <th>Type</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @table_grants.each do |table_grant| %>
+              <tr>
+                <td><%= table_grant.user_id %></td>
+                <td><%= table_grant.db_id %></td>
+                <td><%= table_grant.table %></td>
+                <td><%= table_grant.access_type %></td>
+                <td><%= link_to 'Edit', edit_table_grant_path(table_grant) %></td>
+                <td><%= link_to 'Destroy', table_grant, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+
+
+  <div class = "row">
+    <div class = "col-md-6 col-xs-6">
+    
+      <h3>Table_names</h3>
+      <div class = "table-responsive">
+      <table class = "table table-striped table-hover">
+        <thead>
+          <th>Table name</th>
+        </thead>
+        <tbody>
+          <% @tables.each do |row| %>
+          <tr>
+            <td> <%= row %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div> 
+    </div>
+    <div class = "col-md-6 col-xs-6">
+      <h3> Databases </h3>
+      <div class = "table table-striped table-hover" >
+      <table class = "table table-striped table-hover">
+        <thead>
+          <th> ID </th>
+          <th> Name </th>
+        </thead>  
+        <tbody>
+          <% @databases.each do |db| %>
+            <tr>
+              <td> <%= db.id %> </td>
+              <td> <%= link_to db.name, "/set_database/#{db.id}" %> </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+
+  <br>
+  <p>
+  <%= link_to 'Queries', queries_path %>
+  <br>
+  <%= link_to 'New Query', queries_new_path %>
+  </p>

@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @table_grant.user_id %>
+</p>
+
+<p>
+  <strong>Db:</strong>
+  <%= @table_grant.db_id %>
+</p>
+
+<p>
+  <strong>Table:</strong>
+  <%= @table_grant.table %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @table_grant.access_type %>
+</p>
+
+<%= link_to 'Edit', edit_table_grant_path(@table_grant) %> |
+<%= link_to 'Back', table_grants_path %>

@@ -1,0 +1,10 @@
+
+<% if @tables.nil? %>
+	Select database!
+<% else %>
+	<% @tables.each do |row| %>
+		<p>
+			<%= row['table_name'] %>
+		</p>
+	<% end %>
+<%end%>

@@ -1,0 +1,23 @@
+<%= form_for :query, :url => {:controller => "queries", :action => "create"} do |f| %>
+  <% if @query.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@query.errors.count, "error") %> prohibited this query from being saved:</h2>
+
+      <ul>
+      <% @query.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label "Query" %><br>
+    <%= f.text_field :query_cmd %>
+  </div>
+  <div class ="chosen-container chosen-container-single chosen-with-drop chosen-container-active" data-live-search = "true" >
+    <%= f.collection_select( :database_id, @databases, :id, :name, {:class=>'form-control'}) %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

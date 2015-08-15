@@ -1,0 +1,21 @@
+<h1>Listing Queries</h1>
+<div class="container">
+<table class="table table-striped table-hover">
+  <thead>
+    <th>User ID</th>
+    <th>Query</th>
+    <th>Time</th>
+  </thead>
+  <tbody>
+    <% @queries.each do |query| %>
+      <tr>
+        <td> <%= query.user_id %></td>
+        <td> <%= query.query_cmd %> </td>
+        <td> <%= query.time %> </td>
+      </tr>
+    <% end %>    
+  </tbody>
+
+</table>
+<%= link_to "Back", queries_new_path %>
+</div>

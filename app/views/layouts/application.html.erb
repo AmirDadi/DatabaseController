@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DatabaseController</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+ <% flash.each do |name, msg| -%>
+      <%= content_tag :div, msg, class: name %>
+<% end -%>
+<% if user_signed_in? %>
+	Signed in as <%= current_user.email %>	
+	<%= link_to "sign_out", destroy_user_session_path, :method => :delete %>
+<% end %>
+<%= yield %>
+
+</body>
+</html>

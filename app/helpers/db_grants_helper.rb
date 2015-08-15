@@ -1,0 +1,2 @@
+module DbGrantsHelper
+end
