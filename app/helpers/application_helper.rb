@@ -80,7 +80,6 @@ module ApplicationHelper
 		end
 
 		tables_in_query = get_tables(query)
-		puts "hhhh" + type.to_s
 		tables_in_query.each do |table|
 			table_name = table
 			table_grant = TableGrant.find_by(:user_id=>current_user.id, :table => table_name, :db_id => database_id)

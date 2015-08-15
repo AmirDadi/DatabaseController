@@ -15,7 +15,8 @@ class QueriesController < ApplicationController
 
   def create
     @query = Query.new(:query_cmd => query_params[:query_cmd], :database_id => query_params[:database_id], :user_id => current_user.id, :time => Time.now)
-    cmd = query_params[:query_cmd]
+    @query.query_cmd = @query.query_cmd.gsub '"',"'"
+    cmd = @query.query_cmd
     begin 
       if !check_grants(cmd, Database.find(query_params[:database_id]))
         redirect_to queries_new_path, notice: "Access denied" and return
@@ -30,7 +31,7 @@ class QueriesController < ApplicationController
     end
     db = get_database
     begin 
-      @res = db.exec(query_params[:query_cmd])
+      @res = db.exec(@query.query_cmd)
       @query.save
       redirect_to queries_path, notice:  @res
     rescue PG::Error => e
