@@ -1,0 +1,2 @@
+Some bugs:
+	insert into ... select ... (select table not valid)
