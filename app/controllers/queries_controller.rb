@@ -17,13 +17,24 @@ class QueriesController < ApplicationController
     @query = Query.new(:query_cmd => query_params[:query_cmd], :database_id => query_params[:database_id], :user_id => current_user.id, :time => Time.now)
     @query.query_cmd = @query.query_cmd.gsub '"',"'"
     cmd = @query.query_cmd
-    begin 
-      if !check_grants(cmd, Database.find(query_params[:database_id]))
-        redirect_to queries_new_path, notice: "Access denied" and return
+ #   cmd = repair_alter(cmd)
+    if !@query.valid?
+      @databases = Database.all
+      @table_grant = TableGrant.new
+      @databases = db_of_user(current_user.id, get_database)
+      @tables = tables_of_user(current_user.id, get_database)
+     if @tables_accessible.nil?
+        @tables_accessible = []
       end
-    rescue Exception => e
-      redirect_to queries_path, notice: e.message and return
+      render 'new' and return
     end
+    # begin 
+    #   if !check_grants(cmd, Database.find(@query.database_id))
+    #     redirect_to queries_new_path, notice: "Access denied" and return
+    #   end
+    # rescue Exception => e
+    #   redirect_to queries_new_path, notice: e.message and return
+    # end
 
     if cmd.split[0].casecmp('select')==0
       @table = select_query(cmd, get_database)
@@ -31,12 +42,12 @@ class QueriesController < ApplicationController
     end
     db = get_database
     begin 
-      @res = db.exec(@query.query_cmd)
+      @res = db.exec(cmd)
       @query.save
       redirect_to queries_path, notice:  @res
-    rescue PG::Error => e
+    rescue Exception => e
       @res = e
-      redirect_to(queries_path, notice: e) and return
+      redirect_to(queries_new_path, notice: e) and return
     end
   end
 

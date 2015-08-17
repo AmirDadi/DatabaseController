@@ -15,3 +15,7 @@
 //= require turbolinks
 //= require_tree .
 //= require bootstrap
+//= require plugins/datatables/dataTables.bootstrap
+//= require plugins/datatables/dataTables.bootstrap.min
+//= require plugins/slimScroll/jquery.slimscroll.min
+//= require plugins/fastclick/fastclick.min

@@ -1,23 +1,37 @@
+<style>
+textarea {
+
+  max-width: 70%;
+  width: 50%;
+}
+</style>
+<div class="box-header with-border" style="text-align:center">
+  <div class="box-title">
+    <h3>New Query</h3>
+  </div>
+</div>  
+<div class="box-body" style="text-align:center">
 <%= form_for :query, :url => {:controller => "queries", :action => "create"} do |f| %>
   <% if @query.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@query.errors.count, "error") %> prohibited this query from being saved:</h2>
+    <div id="form-group has-error">
+      <h4><%= pluralize(@query.errors.count, "error") %> prohibited this query from being saved:</h2>
 
-      <ul>
+      <ul id = "form-group has-error">
       <% @query.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
       </ul>
     </div>
   <% end %>
-  <div class="field">
+  <div class="form-group">
     <%= f.label "Query" %><br>
-    <%= f.text_field :query_cmd %>
+    <%= f.text_area :query_cmd, class: "form-control", rows: "3", style:"margin:auto" %>
   </div>
-  <div class ="chosen-container chosen-container-single chosen-with-drop chosen-container-active" data-live-search = "true" >
+  <div class ="form-group" >
     <%= f.collection_select( :database_id, @databases, :id, :name, {:class=>'form-control'}) %>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit 'Submit', class: "btn btn-primary" %>
   </div>
 <% end %>
+</div>

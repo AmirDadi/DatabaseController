@@ -84,7 +84,7 @@ module ApplicationHelper
 			table_name = table
 			table_grant = TableGrant.find_by(:user_id=>current_user.id, :table => table_name, :db_id => database_id)
 			if table_grant.nil? 
-				raise "Table not found or you don't have access to #{table_name}"
+				raise Exception.new("Table not found or you don't have access to '#{table_name}'")
 			elsif (table_grant.access_type & type) == 0 && type != SELECT
 				return false
 			end
@@ -92,13 +92,20 @@ module ApplicationHelper
 		true
 	end
 
+	def repair_alter(cmd)
+		revised_cmd = cmd.gsub('(','')
+		revised_cmd = revised_cmd.gsub(')','')
+		type = revised_cmd.split()[0]
+		
 
+
+	end
 	def get_tables( query)
 		tables = `java -jar "JSQL Parser.jar" "#{query}"`
 		if tables.split[0] == "Exception"
 			raise tables
 		end
-		return tables.split(",")
+		return tables.split(", ")
 	end
 end
 
