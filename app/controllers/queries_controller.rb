@@ -36,9 +36,21 @@ class QueriesController < ApplicationController
     #   redirect_to queries_new_path, notice: e.message and return
     # end
 
-    if cmd.split[0].casecmp('select')==0
-      @table = select_query(cmd, get_database)
-      render :action => :select and return
+    if cmd.tr('()','').split[0].casecmp('select')==0
+      begin
+        @table = select_query(cmd, get_database)
+        render :action => :select and return
+      rescue PG::Error =>e
+        @databases = Database.all
+        @table_grant = TableGrant.new
+        @databases = db_of_user(current_user.id, get_database)
+        @tables = tables_of_user(current_user.id, get_database)
+        @query.errors.add(:query_cmd, e)
+        if @tables_accessible.nil?
+          @tables_accessible = []
+        end
+        render 'new' and return
+      end        
     end
     db = get_database
     begin 
