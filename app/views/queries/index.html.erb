@@ -17,14 +17,22 @@
             <th>Email</th>
             <th>Query</th>
             <th>Time</th>
+            <th>Roll back </th>
           </thead>
           <tbody>
             <% @queries.each do |query| %>
               <tr>
                 <td> <%= User.find(query.user_id).email %></td>
-                <td> <%= query.query_cmd %> </td>
+                <td> <%= link_to query.query_cmd, "/queries/#{query.id}"%> </td>
                 <td> <%= Database.find(query.database_id).name %> </td>
                 <td> <%= query.time %> </td>
+                <td>
+                     <% if query.roll_backed %>
+                        <%= "Rolled back"%>
+                      <% else %>
+                        <%= link_to "Roll Back", "/query/#{query.id}/rollback" %>
+                      <% end %>
+                </td> 
               </tr>
             <% end %>    
           </tbody>

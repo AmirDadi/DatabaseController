@@ -11,10 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150726075945) do
+ActiveRecord::Schema.define(version: 20150829045454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "changes", force: true do |t|
+    t.integer  "query_id"
+    t.string   "row"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "databases", force: true do |t|
     t.string   "name"
@@ -38,6 +45,7 @@ ActiveRecord::Schema.define(version: 20150726075945) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "database_id"
+    t.boolean  "roll_backed"
   end
 
   create_table "table_grants", force: true do |t|

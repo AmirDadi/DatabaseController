@@ -3,12 +3,13 @@ Rails.application.routes.draw do
   get 'queries' => 'queries#index'
   get 'queries/new'
   post 'queries/create'
- 
+  get 'queries/:id' => 'queries#show'
   get 'databases/new'
   post 'databases/create'
-  get 'queries/rollback'
+
   get 'queries/select_star/:table' => 'queries#select_star'
   get 'set_database/:db_id' => 'users#set_database'
+  get 'roll_back/:query_id' => 'queries#roll_back'
   resources :db_grants
   resources :users
   resources :table_grants

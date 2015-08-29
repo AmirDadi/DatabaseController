@@ -1,2 +1,5 @@
 Some bugs:
 	insert into ... select ... (select table not valid)
+	removing user cause error on queries page
+	alter table!
+	

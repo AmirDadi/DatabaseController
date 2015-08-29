@@ -28,13 +28,6 @@ class QueriesController < ApplicationController
       end
       render 'new' and return
     end
-    # begin 
-    #   if !check_grants(cmd, Database.find(@query.database_id))
-    #     redirect_to queries_new_path, notice: "Access denied" and return
-    #   end
-    # rescue Exception => e
-    #   redirect_to queries_new_path, notice: e.message and return
-    # end
 
     if cmd.tr('()','').split[0].casecmp('select')==0
       begin
@@ -52,12 +45,14 @@ class QueriesController < ApplicationController
         render 'new' and return
       end        
     end
-    db = get_database
-    begin 
-      @res = db.exec(cmd)
+    begin
+
+     
       @query.save
+      @res = exec_query(cmd)
       redirect_to queries_path, notice:  @res
     rescue Exception => e
+      @query.destroy
       @res = e
       redirect_to(queries_new_path, notice: e) and return
     end
@@ -66,12 +61,13 @@ class QueriesController < ApplicationController
  
   def select_star
     @table = select_query("SELECT * FROM #{params[:table]}", get_database)
+    render 'select'
   end
 
 
   def select
-
   end
+
   def index
     @queries = Query.all
   end
@@ -79,10 +75,11 @@ class QueriesController < ApplicationController
   def update
   end
 
-  def rollback
+  def roll_back
   end
 
-
+  def show
+  end
 
   private
   def query_params

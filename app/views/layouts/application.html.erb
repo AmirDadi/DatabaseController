@@ -58,12 +58,13 @@ body{
       	</section>
       </aside>
       <% end %>
+      <div class="content-wrapper">
+      <% flash.each do |name, msg| -%>
+        <%= content_tag :div, msg, class: name %>
+      <% end -%>
+          <%= yield %>
+      </div>
     </div>
 
-    <div class="content-wrapper">
-    <% flash.each do |name, msg| -%>
-      <%= content_tag :div, msg, class: name %>
-<% end -%>
-    		<%= yield %>
-    </div>
+
   </body>

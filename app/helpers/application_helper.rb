@@ -11,7 +11,6 @@ module ApplicationHelper
 		else
 			tables = Hash.new
 			TableGrant.where(:user_id => user_id, :db_id => current_user.db_id).each do |grant|
-				puts grant[:table]
 				tables[grant[:table]] = grant[:access_type]
 			end
 
@@ -58,39 +57,49 @@ module ApplicationHelper
     table_names
 	end
 
-	def execute_query(query, db_name)
-		db = connect_db(db_name)
+	def exec_query(query)
+		db = get_database
 		db.exec(query)
 	end
 
-
-	def check_grants(query, database_id)
-		type_string = query.split[0]
-		type = 0
-		if type_string.casecmp("INSERT")==0
-			type = INSERT
-		elsif type_string.casecmp("DELETE")==0
-			type = DELETE
-		elsif type_string.casecmp("UPDATE")==0 || type_string.casecmp("ALTER") == 0
-			type = UPDATE
-		elsif type_string.casecmp("SELECT")==0
-			type = SELECT
-		else
-			type = -1
-		end
-
-		tables_in_query = get_tables(query)
-		tables_in_query.each do |table|
-			table_name = table
-			table_grant = TableGrant.find_by(:user_id=>current_user.id, :table => table_name, :db_id => database_id)
-			if table_grant.nil? 
-				raise Exception.new("Table not found or you don't have access to '#{table_name}'")
-			elsif (table_grant.access_type & type) == 0 && type != SELECT
-				return false
-			end
-		end
-		true
+	def exec_query_db(query, db_id)
+		db = connect_db(Database.find(db_id).name)
+		db.exec(query)
 	end
+
+	def type_of(query)
+		type_string = query.split[0]
+		if type_string.casecmp("INSERT")==0
+			INSERT
+		elsif type_string.casecmp("DELETE")==0
+			DELETE
+		elsif type_string.casecmp("UPDATE")==0 || type_string.casecmp("ALTER") == 0
+			UPDATE
+		elsif type_string.casecmp("SELECT")==0
+			SELECT
+		else
+			-1
+		end
+	end
+
+	# def check_grants(query, database_id)
+
+	# 	type = type_of_query(query)
+		
+
+	# 	tables_in_query = get_tables(query, type)
+
+	# 	tables_in_query.each do |table|
+	# 		table_name = table
+	# 		table_grant = TableGrant.find_by(:user_id=>current_user.id, :table => table_name, :db_id => database_id)
+	# 		if table_grant.nil? 
+	# 			raise Exception.new("Table not found or you don't have access to '#{table_name}'")
+	# 		elsif (table_grant.access_type & type) == 0 && type != SELECT
+	# 			return false
+	# 		end
+	# 	end
+	# 	true
+	# end
 
 	def repair_alter(cmd)
 		revised_cmd = cmd.gsub('(','')
@@ -100,12 +109,24 @@ module ApplicationHelper
 
 
 	end
-	def get_tables( query)
+	def get_tables( query, type)
 		tables = `java -jar "JSQL Parser.jar" "#{query}"`
 		if tables.split[0] == "Exception"
 			raise tables
 		end
+
+		if (type == DELETE or type == UPDATE)
+			tables = tables.split('\n').last
+		end
 		return tables.split(", ")
+	end
+
+	def get_where(query)
+		tables = `java -jar "JSQL Parser.jar" "#{query}"`
+		if tables.split[0] == "Exception"
+			raise tables
+		end
+		tables.lines.first
 	end
 end
 
