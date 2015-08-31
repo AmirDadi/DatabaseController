@@ -56,18 +56,40 @@ class Query < ActiveRecord::Base
 
 
 	def set_changes
-		Rails.logger.error ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
-		
-	
-		
-		if ( self.type != DELETE and self.type != UPDATE)
-			return
+		table = get_tables(self.query_cmd, self.type)[0]		
+		if self.type == DELETE
+			set_delete_changes(table)
+		elsif self.type == UPDATE
+			set_update_changes(table)
 		end
+	end
 
+	def set_update_changes(table)
+		attributes = get_table_attributes(table, self.database_id)
+		attributes = attributes.to_s.tr("[]\"",'')
+		function = "WITH rows as (#{self.query_cmd} returning  #{attributes}) select * from rows"
+		Rails.logger.debug("\n\n\n#{function}\n\n\n")
+		result = exec_query_db(function, self.database_id)
+		table = []
+		result.each do |row|
+			table << row
+		end
+		
+		table.each do |row|
+			statement = ""
+			row.each do |key, value|
+				statement = "#{key}=#{value},"
+			end
+			change = Change.new(:query_id=>self.id, :row => statement[0..statement.size-2])
+			change.save!
+		end
+	end
+
+	def set_delete_changes(table)
 		where = get_where(self.query_cmd)
-		table = get_tables(self.query_cmd,self.type)[0]
+		
 		where = "" if where == 'null'
-		Rails.logger.error "================" + "select * from #{table} where #{where}"
+
 		rows_affected = exec_query_db("select * from #{table} where #{where}",self.database_id)
 
 		rows_affected.each do |row|
@@ -78,7 +100,9 @@ class Query < ActiveRecord::Base
 				value="" if value.nil?
 				values = values + "'"+value+"'" + " ,"
 			end
+
 			data = "(#{keys[0..keys.size-2]}) VALUES (#{values[0..values.size-2]})"
+
 			change = Change.new(:query_id=>self.id, :row=>data)
 			change.save!
 		end

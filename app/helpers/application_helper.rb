@@ -82,33 +82,13 @@ module ApplicationHelper
 		end
 	end
 
-	# def check_grants(query, database_id)
-
-	# 	type = type_of_query(query)
-		
-
-	# 	tables_in_query = get_tables(query, type)
-
-	# 	tables_in_query.each do |table|
-	# 		table_name = table
-	# 		table_grant = TableGrant.find_by(:user_id=>current_user.id, :table => table_name, :db_id => database_id)
-	# 		if table_grant.nil? 
-	# 			raise Exception.new("Table not found or you don't have access to '#{table_name}'")
-	# 		elsif (table_grant.access_type & type) == 0 && type != SELECT
-	# 			return false
-	# 		end
-	# 	end
-	# 	true
-	# end
 
 	def repair_alter(cmd)
 		revised_cmd = cmd.gsub('(','')
 		revised_cmd = revised_cmd.gsub(')','')
 		type = revised_cmd.split()[0]
-		
-
-
 	end
+
 	def get_tables( query, type)
 		tables = `java -jar "JSQL Parser.jar" "#{query}"`
 		if tables.split[0] == "Exception"
@@ -145,6 +125,27 @@ module ApplicationHelper
 		end
 		s
 	end
+
+
+	def get_table_attributes(table, db_id)
+		query = "SELECT * FROM #{table}"
+		res = exec_query_db(query, db_id)
+		attributes = []
+
+		table = []
+		res.each do |row|
+			table << row
+		end
+		puts table
+		table[0].each_key do |key|
+			attributes << key
+		end
+		attributes
+
+	end
+
+	private
+	
 end
 
 # `jruby ./query_parser.rb "UPDATE Customers SET ContactName='Alfred Schmidt', City='Hamburg' WHERE CustomerName='Alfreds Futterkiste'"`
