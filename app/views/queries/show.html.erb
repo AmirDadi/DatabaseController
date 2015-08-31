@@ -1,0 +1,31 @@
+<section class="content">
+<h1>Listing Queries</h1>
+  <div class = "row">
+    <div class = "col-md-12 col-xs-12">
+      <div class="box box-primary">
+        <div class="box-header">
+
+          <div class="box-title"> <h3>Table_names</h3> </div>
+        </div>
+        <div class = "box-body">
+          <b> Query: </b><%= @query.query_cmd %>
+          <br>
+          <b> Database: </b> <%= Database.find(@query.database_id).name %>
+          <br>
+          <b> Time: </b>  <%= @query.time %>
+          <br>  
+          <b> Roll back: </b>
+          <% if @query.roll_backed %>
+            <%= "Rolled back"%>
+          <% else %>
+            <%= link_to "Roll Back", "/query/#{@query.id}/rollback" %>
+          <% end %>
+        
+          <br>
+
+        <%= link_to "Back", queries_new_path %>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>

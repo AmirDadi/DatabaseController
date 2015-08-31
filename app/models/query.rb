@@ -69,15 +69,16 @@ class Query < ActiveRecord::Base
 		where = "" if where == 'null'
 		Rails.logger.error "================" + "select * from #{table} where #{where}"
 		rows_affected = exec_query_db("select * from #{table} where #{where}",self.database_id)
-		keys = ""
-		values = ""
+
 		rows_affected.each do |row|
+			keys = ""
+			values = ""
 			row.each do |key,value|
 				keys = keys + key + ","
 				value="" if value.nil?
 				values = values + "'"+value+"'" + " ,"
 			end
-			data = "(#{keys[0..keys.size-2]}) VALUES #{values[0..values.size-2]}"
+			data = "(#{keys[0..keys.size-2]}) VALUES (#{values[0..values.size-2]})"
 			change = Change.new(:query_id=>self.id, :row=>data)
 			change.save!
 		end

@@ -2,6 +2,8 @@ class QueriesController < ApplicationController
   helper :all
   include ApplicationHelper
   before_filter :authenticate_user! 
+  respond_to :html
+
   def new
     @query = Query.new
     @databases = Database.all
@@ -75,10 +77,31 @@ class QueriesController < ApplicationController
   def update
   end
 
-  def roll_back
+  def rollback
+    @query = Query.find(params[:id])
+    table = @query.get_tables(@query.query_cmd, @query.type)[0]
+
+    type = @query.type
+    if type == INSERT
+      where = get_rollback_insert(@query.query_cmd)
+      @cmd = []
+      @cmd << "DELETE FROM #{table} WHERE #{where} "
+      exec_query_db("DELETE FROM #{table} WHERE #{where} ",@query.database_id)
+    else
+      @rows_affected = Change.where(:query_id => @query.id)
+      @cmd = []
+      @rows_affected.each do |row|
+        puts "INSERT INTO #{table} #{row.row}"
+        @cmd << "INSERT INTO #{table} #{row.row}"
+        exec_query_db("INSERT INTO #{table} #{row.row}", @query.database_id)
+      end
+    end
+    @query.roll_backed = true
+    @query.save
   end
 
   def show
+    @query = Query.find(params[:id])
   end
 
   private
@@ -88,4 +111,26 @@ class QueriesController < ApplicationController
 
   def set_query
   end
+  private
+    ACCESS_TYPES = [SELECT = 1, INSERT = 2, DELETE = 4, UPDATE = 8]
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

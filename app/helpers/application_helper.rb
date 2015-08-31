@@ -128,6 +128,23 @@ module ApplicationHelper
 		end
 		tables.lines.first
 	end
+
+	def get_rollback_insert(query)
+		result = `java -jar "JSQL Parser.jar" insert "#{query}"`
+		if result.split[0] == "Exception"
+			raise result
+		end
+		columns = result.lines.first.tr("[]\n'",'').split(',')
+		values = result.lines.last.tr("[]()\n'",'').split(',')
+		s=''
+		for i in 0..columns.size-1
+			s = s + columns[i] + "='" + values[i] + "'"
+			if i != columns.size-1
+				s = s + ' AND '
+			end
+		end
+		s
+	end
 end
 
 # `jruby ./query_parser.rb "UPDATE Customers SET ContactName='Alfred Schmidt', City='Hamburg' WHERE CustomerName='Alfreds Futterkiste'"`

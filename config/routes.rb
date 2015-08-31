@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   get 'queries/select_star/:table' => 'queries#select_star'
   get 'set_database/:db_id' => 'users#set_database'
-  get 'roll_back/:query_id' => 'queries#roll_back'
+  get 'query/:id/rollback' => 'queries#rollback'
   resources :db_grants
   resources :users
   resources :table_grants
