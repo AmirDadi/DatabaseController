@@ -91,10 +91,20 @@ class QueriesController < ApplicationController
       @rows_affected = Change.where(:query_id => @query.id)
       @cmd = []
       @rows_affected.each do |row|
-        puts "INSERT INTO #{table} #{row.row}"
-        @cmd << "INSERT INTO #{table} #{row.row}"
-        exec_query_db("INSERT INTO #{table} #{row.row}", @query.database_id)
+        if row.delete_or_insert
+          puts "DELETE FROM #{table} WHERE #{row.row}"
+          @cmd << "DELETE FROM #{table} WHERE #{row.row}"
+          exec_query_db("DELETE FROM #{table} WHERE #{row.row}", @query.database_id)
+        end
       end
+      @rows_affected.each do |row| 
+        if !row.delete_or_insert
+          puts "INSERT INTO #{table} #{row.row}"
+          @cmd << "INSERT INTO #{table} #{row.row}"
+          exec_query_db("INSERT INTO #{table} #{row.row}", @query.database_id)
+        end
+      end
+
     end
     @query.roll_backed = true
     @query.save

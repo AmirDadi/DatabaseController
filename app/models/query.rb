@@ -65,6 +65,7 @@ class Query < ActiveRecord::Base
 	end
 
 	def set_update_changes(table)
+		set_delete_changes(table)
 		attributes = get_table_attributes(table, self.database_id)
 		attributes = attributes.to_s.tr("[]\"",'')
 		function = "WITH rows as (#{self.query_cmd} returning  #{attributes}) select * from rows"
@@ -74,15 +75,17 @@ class Query < ActiveRecord::Base
 		result.each do |row|
 			table << row
 		end
-		
+		Rails.logger.debug("\n\n\n#{table.size}\n\n\n")
 		table.each do |row|
+			Rails.logger.debug("\n\n\n#{row}\n\n\n")
 			statement = ""
 			row.each do |key, value|
-				statement = "#{key}=#{value},"
+				statement = statement + "#{key}='#{value}' AND "
 			end
-			change = Change.new(:query_id=>self.id, :row => statement[0..statement.size-2])
+			change = Change.new(:query_id=>self.id, :row => statement[0..statement.size-5], :delete_or_insert=>true)
 			change.save!
 		end
+
 	end
 
 	def set_delete_changes(table)
@@ -103,7 +106,7 @@ class Query < ActiveRecord::Base
 
 			data = "(#{keys[0..keys.size-2]}) VALUES (#{values[0..values.size-2]})"
 
-			change = Change.new(:query_id=>self.id, :row=>data)
+			change = Change.new(:query_id=>self.id, :row=>data, :delete_or_insert => false)
 			change.save!
 		end
 	end

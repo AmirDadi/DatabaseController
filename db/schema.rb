@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20150831093519) do
     t.string   "row"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "delete_or_insert"
+    t.boolean  "delete_or_insert" #delete false, insert true
   end
 
   create_table "databases", force: true do |t|
