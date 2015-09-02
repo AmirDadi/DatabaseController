@@ -1,11 +1,12 @@
 class DatabasesController <AdminController
 	def new
 		@database = Database.new
+		@database.save
 	end
 	def create
-		@database = Database.new(databse_params)
+		@database = Database.new(:name => params[:database])
 		@database.save
-		redirect_to 'new'
+		redirect_to '/queries'
 	end
 
 	
