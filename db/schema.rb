@@ -21,11 +21,12 @@ ActiveRecord::Schema.define(version: 20150831093519) do
     t.string   "row"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "delete_or_insert" #delete false, insert true
+    t.boolean  "delete_or_insert"
   end
 
   create_table "databases", force: true do |t|
     t.string   "name"
+    t.string   "password"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

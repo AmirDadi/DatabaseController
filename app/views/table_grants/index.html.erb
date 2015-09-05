@@ -1,4 +1,4 @@
-<section class="content-header">
+  <section class="content-header">
   <h1>Table Grants </h1>
 </section>
 
@@ -7,10 +7,10 @@
     <div class="col-md-6">
 
 
-      <div class="box">
+      <div class="box" style="min-height:200px">
         
           <div class="box-header">
-            <div class="box-title"> <h3>Form</h3> </div>
+            <div class="box-title"> <h3>New User</h3> </div>
           </div>
           <div class = "box-body">
             <span>SELECT = 1, INSERT = 2, DELETE = 4, UPDATE = 8</span>
@@ -19,7 +19,7 @@
       </div>
       <div class="box"> <!-- First Box -->
         <div class="box-header">
-          <div class="box-title"> <h3>Table</h3> </div>
+          <div class="box-title"> <h3>Users</h3> </div>
         </div>
         <div class = "box-body">
 
@@ -35,21 +35,47 @@
                 <tr>
                   <td> <%= user.id %></td>
                   <td> <%= user.email %> </td>
-                  <td> <%= user.admin %> </td>
+                  <td> <%= link_to "#{user.admin}", "users/#{user.id}/setadmin",
+                    data: (user.id==current_user.id ? {confirm: 'Are you sure?'} : nil) %> </td>
                   <td> <%= link_to 'Edit', edit_user_path(user) %> </td>
-                  <td> <%= link_to 'Destroy', user, method: :delete, data: {confirm: 'Are you sure?'} %> </td>
+                  <td> <%= link_to 'Destroy', user,  method: :delete, data: {confirm: 'Are you sure?'} %> </td>
                 </tr>
               <% end %>    
             </tbody>
           </table>
         </div>
       </div>
+      <div class="box">
+          <div class="box-title"> <h3>Table_names</h3> </div>
+          <div class = "box-body">
+
+          <table id="table1" class = "table table-bordered table-striped dataTable">
+            <thead>
+              <tr>
+                <th>Table name</th>
+                <td>Database ID </td>
+              </tr>
+            </thead>
+            <tbody>
+              <% @tables.each do |key,value| %>
+              <tr>
+                <!-- <td> <%= key %></td> -->
+               <td> <%= link_to key, "/queries/select_star/#{key}" %></td>
+               <td> <%= value %> </td>
+              </tr>
+              <% end %>
+            </tbody>
+          </table>
+
+
+        </div>
+      </div>
     </div>
     <div class="col-md-6">
 
-      <div class="box">
+      <div class="box" style="min-height:200px">
           <div class="box-header">
-            <div class="box-title"> <h3>Form</h3> </div>
+            <div class="box-title"> <h3>New Grant</h3> </div>
           </div>
           <div class = "box-body">
              <span>SELECT = 1, INSERT = 2, DELETE = 4, UPDATE = 8</span>
@@ -59,7 +85,7 @@
 
       <div class="box">
         <div class="box-header">
-          <div class="box-title"> <h3>Table</h3> </div>
+          <div class="box-title"> <h3>Grants</h3> </div>
         </div>
         <div class = "box-body">
           <span>SELECT = 1, INSERT = 2, DELETE = 4, UPDATE = 8</span>
@@ -95,6 +121,9 @@
           </table>
           
         </div>
+      </div>
+      <div class="box">
+
       </div>
     </div>
 

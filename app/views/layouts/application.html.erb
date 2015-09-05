@@ -45,19 +45,26 @@ body{
       </header>
 
 
-      <% if user_signed_in? %>
+      
       <aside class="main-sidebar">
       	<section class="sidebar">
       		<ul class="sidebar-menu">
-      			<li class="header">MAIN NAVIGATION</li>
-      			
-      			<li> <%= link_to " Queries", '/queries', class: "fa fa-table" %> </li>
-      			<li> <%= link_to " New Query", '/queries/new', class: "fa fa-pencil-square-o" %> </li>
-      			<li> <%= link_to " Sign out", destroy_user_session_path, :method => :delete, class: "fa fa-sign-out" %> </li>
+            <% if user_signed_in? %>
+        			<li class="header">MAIN NAVIGATION</li>
+        			
+        			<li> <%= link_to " Queries", '/queries', class: "fa fa-table" %> </li>
+        			<li> <%= link_to " New Query", '/queries/new', class: "fa fa-pencil-square-o" %> </li>
+        			<li> <%= link_to " Sign out", destroy_user_session_path, :method => :delete, class: "fa fa-sign-out" %> </li>
+              <% if current_user.admin? %>
+                <li class="header">Admin</li>
+                <li> <%= link_to " TableGrants", '/table_grants', class: "fa fa-table" %> </li>
+              <% end %>
+            <% end %>
+
       		</ul>
       	</section>
       </aside>
-      <% end %>
+      
       <div class="content-wrapper">
       <% flash.each do |name, msg| -%>
         <%= content_tag :div, msg, class: name %>

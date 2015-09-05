@@ -40,6 +40,12 @@ class UsersController < ApplicationController
     	redirect_to(:back)
     end
 
+    def invert_admin
+    	@user = User.find(params[:id])
+    	@user.admin = (not @user.admin)
+    	@user.save
+    	redirect_to(:back)
+    end
 	private
 	def set_user
       @user = User.find(params[:id])

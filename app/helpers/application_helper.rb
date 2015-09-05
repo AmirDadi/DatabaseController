@@ -47,15 +47,18 @@ module ApplicationHelper
 	end
 
 	def get_all_tables
-		return [] if current_user.db_id.nil?
-		current_db = PG::Connection.new(dbname: Database.find(current_user.db_id).name, user: 'postgres', password: '1234')
-		tables = current_db.exec("SELECT table_name FROM information_schema.tables where table_schema='public'")
 		table_names = []
-	    tables.each do |row|
-	      table_names << row['table_name']
-    end
+		Database.all.each do |db|
+			current_db = PG::Connection.new(dbname: db.name, user: 'postgres', password: '1234')
+			tables = current_db.exec("SELECT table_name FROM information_schema.tables where table_schema='public'")
+			table_names = []
+		    tables.each do |row|
+		      table_names << [row['table_name'],db.id]
+		  	end
+		end
     table_names
 	end
+
 
 	def exec_query(query)
 		db = get_database

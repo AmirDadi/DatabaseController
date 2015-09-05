@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'queries/:id' => 'queries#show'
   get 'databases/new'
   post 'databases/create'
-
+  get 'users/:id/setadmin' => 'users#invert_admin'
   get 'queries/select_star/:table' => 'queries#select_star'
   get 'set_database/:db_id' => 'users#set_database'
   get 'query/:id/rollback' => 'queries#rollback'
