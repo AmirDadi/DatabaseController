@@ -26,7 +26,6 @@ ActiveRecord::Schema.define(version: 20150831093519) do
 
   create_table "databases", force: true do |t|
     t.string   "name"
-    t.string   "password"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

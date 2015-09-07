@@ -11,13 +11,14 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
 		@user.save
-		redirect_to root_path
+		@users = User.all
+		render 'users/new'
 	end
 
 	def new
+		@users = User.all
 		@user= User.new
 		@user.save
-
 	end
 
 	def index

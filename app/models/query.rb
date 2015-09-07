@@ -22,13 +22,27 @@ class Query < ActiveRecord::Base
 	end
 
 	def check_grants
-
 		query = self.query_cmd
 		database_id = self.database_id
 		type_string = query.split[0]
 		type = self.type
 
 		tables_in_query = get_tables(query, type)
+
+		all = get_tables_of_database(database_id)
+
+		tables_in_query.each do |table|
+			if !all.include?(table) 
+				errors.add(:query_cmd,"Table not found '#{table}'")
+				return
+			end
+		end	
+
+
+		if User.find(self.user_id)
+			return true
+		end
+
 		tables_in_query.each do |table|
 			table_name = table
 			table_grant = TableGrant.find_by(:user_id=>self.user_id, :table => table_name, :db_id => database_id)
@@ -51,7 +65,9 @@ class Query < ActiveRecord::Base
 		if type == UPDATE or type == DELETE
 			tables = tables.lines.last
 		end
+		return [] if tables.nil?
 		return tables.split(", ")
+
 	end
 
 
@@ -80,12 +96,13 @@ class Query < ActiveRecord::Base
 			Rails.logger.debug("\n\n\n#{row}\n\n\n")
 			statement = ""
 			row.each do |key, value|
-				statement = statement + "#{key}='#{value}' AND "
+				if value.size != 0
+					statement = statement + "#{key}='#{value}' AND "
+				end
 			end
 			change = Change.new(:query_id=>self.id, :row => statement[0..statement.size-5], :delete_or_insert=>true)
 			change.save!
 		end
-
 	end
 
 	def set_delete_changes(table)

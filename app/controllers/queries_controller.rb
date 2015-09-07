@@ -88,7 +88,9 @@ class QueriesController < ApplicationController
       @cmd << "DELETE FROM #{table} WHERE #{where} "
       exec_query_db("DELETE FROM #{table} WHERE #{where} ",@query.database_id)
     else
+      puts "\n\n\nOther types"
       @rows_affected = Change.where(:query_id => @query.id)
+      puts "#{@rows_affected.size}\n\n\n"
       @cmd = []
       @rows_affected.each do |row|
         if row.delete_or_insert

@@ -2,4 +2,8 @@ Some bugs:
 	insert into ... select ... (select table not valid)
 	removing user cause error on queries page
 	alter table!
-	
+	commas in string of table, where splitting by comma
+	tables from database 
+
+
+Username (Email)

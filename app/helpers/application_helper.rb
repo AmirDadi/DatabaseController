@@ -25,7 +25,7 @@ module ApplicationHelper
 
 	def select_query(query, database)
 		begin
-			result = database.exec(query)
+			result = exec(query, database)
 		rescue PG::Error => e 
 			raise e
 		end
@@ -36,9 +36,13 @@ module ApplicationHelper
 		table
 	end
 
-
+#Connect DB
 	def connect_db(database)
 		PG::Connection.new(dbname: database, user: 'postgres', password: '1234')
+	end
+#Exex Query
+	def exec(query, db)
+		db.exec(query)
 	end
 
 	def get_database
@@ -49,9 +53,8 @@ module ApplicationHelper
 	def get_all_tables
 		table_names = []
 		Database.all.each do |db|
-			current_db = PG::Connection.new(dbname: db.name, user: 'postgres', password: '1234')
-			tables = current_db.exec("SELECT table_name FROM information_schema.tables where table_schema='public'")
-			table_names = []
+			current_db = connect_db(db.name)
+			tables = exec("SELECT table_name FROM information_schema.tables where table_schema='public'", current_db)
 		    tables.each do |row|
 		      table_names << [row['table_name'],db.id]
 		  	end
@@ -59,15 +62,24 @@ module ApplicationHelper
     table_names
 	end
 
+	def get_tables_of_database(db)
+		current_db = connect_db(Database.find(db).name)
+		table_names = []
+		tables = exec("SELECT table_name FROM information_schema.tables where table_schema='public'", current_db)
+	    tables.each do |row|
+	      table_names << row['table_name']
+	  	end
+	  	table_names
+	end
 
 	def exec_query(query)
 		db = get_database
-		db.exec(query)
+		exec(query, db)
 	end
 
 	def exec_query_db(query, db_id)
 		db = connect_db(Database.find(db_id).name)
-		db.exec(query)
+		exec(query,db)
 	end
 
 	def type_of(query)

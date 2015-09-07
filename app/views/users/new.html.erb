@@ -1,1 +1,53 @@
-<%= render 'form' %>
+<section class="content-header">
+  <h1>Users </h1>
+</section>
+
+<section class="content">
+  <div class = "row">
+    <div class="col-md-12">
+
+
+      <div class="box" style="min-height:200px">
+        
+          <div class="box-header">
+            <div class="box-title"> <h3>New User</h3> </div>
+          </div>
+          <div class = "box-body">
+            <%= render 'form' %>
+          </div>
+      </div>
+      <div class="box"> <!-- First Box -->
+        <div class="box-header">
+          <div class="box-title"> <h3>Users</h3> </div>
+        </div>
+        <div class = "box-body">
+
+        <table class = "table table-bordered table-striped dataTable">
+            <thead>
+              <th>User ID</th>
+              <th>Email</th>
+              <th>Admin</th>
+              <th colspan="2"></th>
+            </thead>
+            <tbody>
+              <% @users.each do |user| %>
+                <tr>
+                  <td> <%= user.id %></td>
+                  <td> <%= user.email %> </td>
+                  <td> <%= link_to "#{user.admin}", "users/#{user.id}/setadmin",
+                    data: (user.id==current_user.id ? {confirm: 'Are you sure?'} : nil) %> </td>
+                  <td> <%= link_to 'Edit', edit_user_path(user) %> </td>
+                  <td> <%= link_to 'Remove', user,  method: :delete, data: {confirm: 'Are you sure?'} %> </td>
+                </tr>
+              <% end %>    
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    </div>
+
+  </div>
+</section>

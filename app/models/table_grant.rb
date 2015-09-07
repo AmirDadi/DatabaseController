@@ -8,8 +8,8 @@ class TableGrant < ActiveRecord::Base
 	validate :user_id_exists, :table_exists, :db_id_exists
 	validate :valid_access_type
 	
-	after_initialize :init
-
+	# after_initialize :init
+	include ApplicationHelper
 	def db_id_exists
 		begin
 			Database.find(self.db_id)
@@ -29,7 +29,8 @@ class TableGrant < ActiveRecord::Base
 	end
 
 	def table_exists
-		if (self.current_tables.detect {|f| f["table_name"] == self.table}).nil?
+		t = get_all_tables
+		if (t.detect {|f| f[1]==self.db_id && f[0] == self.table }).nil?
 			errors.add(:table, "table foreign key must exist")
 			false
 		else
@@ -38,22 +39,22 @@ class TableGrant < ActiveRecord::Base
 	end
 
 	def valid_access_type
-		if(self.access_type>15 || self.access_type < 1)
+		if(self.access_type.nil? || self.access_type>15 || self.access_type < 1)
 			errors.add(:access_type, "Access_type is not valid")
 			false
 		end
 	end
 
 
-	cattr_accessor :current_db
-	cattr_accessor :current_tables
+	# cattr_accessor :current_db
+	# cattr_accessor :current_tables
 	
 
 
 
-	def init
-		self.current_db = PG::Connection.new(dbname: 'shop', user: 'postgres', password: '1234')
-		self.current_tables = current_db.exec("SELECT table_name FROM information_schema.tables where table_schema='public'")
-	end
+	# def init
+	# 	self.current_db = PG::Connection.new(dbname: 'shop', user: 'postgres', password: '1234')
+	# 	self.current_tables = current_db.exec("SELECT table_name FROM information_schema.tables where table_schema='public'")
+	# end
 
 end

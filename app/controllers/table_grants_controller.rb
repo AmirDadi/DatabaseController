@@ -32,10 +32,12 @@ class TableGrantsController < AdminController
   def create
     @table_grant = TableGrant.new(table_grant_params)
     last_tb = TableGrant.find_by(:user_id=>@table_grant.user_id, :db_id=>@table_grant.db_id, :table=>@table_grant.table)
-    if !last_tb.nil?
 
-      last_tb.access_type = last_tb.access_type | @table_grant.access_type
-      last_tb.save
+    if !last_tb.nil? 
+      if !@table_grant.access_type.nil?
+        last_tb.access_type = last_tb.access_type | @table_grant.access_type
+        last_tb.save
+      end
 
       redirect_to table_grants_path
     else

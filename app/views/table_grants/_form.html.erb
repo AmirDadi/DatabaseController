@@ -1,4 +1,28 @@
+<% 
+  def options_for_users
+    u = [] 
+    @users.all.each do |user|
+      tmp = []
+      tmp << user.email
+      tmp << user.id
+      u << tmp
+    end
+    u
+  end
+%>
 
+<% 
+  def options_for_database
+    u = [] 
+    Database.all.each do |db|
+      tmp = []
+      tmp << db.name
+      tmp << db.id
+      u << tmp
+    end
+    u
+  end
+%>
 <%= form_for(@table_grant, :html => { :class => 'form-inline' }) do |f| %>
   <% if @table_grant.errors.any? %>
     <div id="error_explanation">
@@ -11,23 +35,55 @@
       </ul>
     </div>
   <% end %>
+  <div class="form-group">
+    <%= f.select :user_id, options_for_users, :selected => :value %>
+  </div>
 
   <div class="form-group">
+    <%= f.select :db_id, options_for_database ,:class => "form-control", :placeholder => "Database ID", :selected => :value %>
+  </div>
+  <div class="form-group">
+    <%= f.select :table, [], :class => "form-control input-sm", :placeholder => "Table Name", :selectd => :value %>
+  </div>
+  <%= f.select(:access_type, [  ['SELECT',1],
+                                ['INSERT',2],
+                                ['UPDATE',4],
+                                ['DELETE',8],
+                                 ],{ :prompt => "Please select"},
+                                   { :size => 4 , :class=>'form-control'}
+                                 ) %>
+  </div>
 
-    <%= f.number_field :user_id, :class => "form-control input-sm", :placeholder => "User ID" %>
-  </div>
-  <div class="form-group">
-    <%= f.number_field :db_id, :class => "form-control input-sm", :placeholder => "Database ID" %>
-  </div>
-  <div class="form-group">
-
-    <%= f.text_field :table, :class => "form-control input-sm", :placeholder => "Table Name" %>
-  </div>
-  <div class="form-group">
-    <%= f.number_field :access_type, :class => "form-control input-sm", :placeholder => "Access Type" %>
-  </div>
   <div class="form-group">
     <%= f.submit "Add", :class =>"btn btn-default" %>
   </div>
+  <div class="form-group"> 
+
 <% end %>
 
+
+<script>
+
+
+$(function() {
+    $('#table_grant_db_id').change(function() {
+      var x = document.getElementById("table_grant_db_id").value
+      document.getElementById("table_grant_table").options.length = 0
+      var hash = new Array()
+      var i =0;
+
+      <% @tables.each do |table| %>
+        hash.push(['<%= table[0] %>', <%=table[1]%>]);
+        i++
+      <% end %>
+      var j =0 
+      for (i=0; i<hash.length; i++)
+         if (hash[i][1] == x){
+           document.getElementById("table_grant_table").options[j++]=new Option(hash[i][0], hash[i][0], true, false)
+         }
+
+    });
+});
+
+ 
+</script>

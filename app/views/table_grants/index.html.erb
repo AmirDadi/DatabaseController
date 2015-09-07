@@ -1,10 +1,10 @@
-  <section class="content-header">
+<section class="content-header">
   <h1>Table Grants </h1>
 </section>
 
 <section class="content">
   <div class = "row">
-    <div class="col-md-6">
+    <!-- <div class="col-md-6">
 
 
       <div class="box" style="min-height:200px">
@@ -13,11 +13,10 @@
             <div class="box-title"> <h3>New User</h3> </div>
           </div>
           <div class = "box-body">
-            <span>SELECT = 1, INSERT = 2, DELETE = 4, UPDATE = 8</span>
             <%= render 'users/form' %>
           </div>
       </div>
-      <div class="box"> <!-- First Box -->
+      <div class="box"> 
         <div class="box-header">
           <div class="box-title"> <h3>Users</h3> </div>
         </div>
@@ -38,7 +37,7 @@
                   <td> <%= link_to "#{user.admin}", "users/#{user.id}/setadmin",
                     data: (user.id==current_user.id ? {confirm: 'Are you sure?'} : nil) %> </td>
                   <td> <%= link_to 'Edit', edit_user_path(user) %> </td>
-                  <td> <%= link_to 'Destroy', user,  method: :delete, data: {confirm: 'Are you sure?'} %> </td>
+                  <td> <%= link_to 'Remove', user,  method: :delete, data: {confirm: 'Are you sure?'} %> </td>
                 </tr>
               <% end %>    
             </tbody>
@@ -59,7 +58,7 @@
             <tbody>
               <% @tables.each do |key,value| %>
               <tr>
-                <!-- <td> <%= key %></td> -->
+                
                <td> <%= link_to key, "/queries/select_star/#{key}" %></td>
                <td> <%= value %> </td>
               </tr>
@@ -70,8 +69,8 @@
 
         </div>
       </div>
-    </div>
-    <div class="col-md-6">
+    </div> -->
+    <div class="col-md-12">
 
       <div class="box" style="min-height:200px">
           <div class="box-header">
@@ -89,7 +88,7 @@
         </div>
         <div class = "box-body">
           <span>SELECT = 1, INSERT = 2, DELETE = 4, UPDATE = 8</span>
-          <table class = "table table-bordered table-striped dataTable">
+          <table id="table2" class = "table table-bordered table-striped dataTable">
             <thead>
               <tr>
                 <th>User</th>
@@ -103,8 +102,8 @@
             <tbody>
               <% @table_grants.each do |table_grant| %>
                 <tr>
-                  <td><%= table_grant.user_id %></td>
-                  <td><%= table_grant.db_id %></td>
+                  <td><%= User.find(table_grant.user_id).email %></td>
+                  <td><%= Database.find(table_grant.db_id).name %></td>
                   <td><%= table_grant.table %></td>
                   <% hash = {1=>"SELECT", 2=>"INSERT", 4=>"DELETE", 8=>"UPDATE"} %>
                   <td>  <% hash.each do |key, value| %>
@@ -114,7 +113,7 @@
                         <%end%>
                   </td>
                   <td><%= link_to 'Edit', edit_table_grant_path(table_grant) %></td>
-                  <td><%= link_to 'Destroy', table_grant, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                  <td><%= link_to 'Remove', table_grant, method: :delete, data: { confirm: 'Are you sure?' } %></td>
                 </tr>
               <% end %>
             </tbody>
@@ -129,3 +128,18 @@
 
   </div>
 </section>
+
+<script>
+  $(function () {
+    $("#table1").DataTable();
+    $("#table2").DataTable();
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false
+    });
+  });
+</script>
